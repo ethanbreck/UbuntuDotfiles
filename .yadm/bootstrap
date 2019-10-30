@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+echo -e "Upgrading system packages..."
+
+sudo apt update
+sudo apt upgrade
+
+sudo add-apt-repository -y ppa:alessandro-strada/ppa
+sudo add-apt-repository -y ppa:webupd8team/atom
+
+echo -e "Installing packages from ~/.yadm/packages.txt"
+for lib in $(cat "${HOME}/.yadm/packages.txt"); do
+	sudo apt install "${lib}"
+done
+
+
+# Try to install oh-my-zsh
+if [[ ! -d ~/.oh-my-zsh ]]; then
+	echo 'Could not find oh-my-zsh installed at ~/.oh-my-zsh'
+	echo "Run the following command to install it there:"
+	echo 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
+	exit 1
+fi
+
+original_files=("${HOME}/.zshenv" "${HOME}/.zsh_history")
+
+for file in "${original_files[@]}"; do
+	if [[ -f "$file" ]]; then
+		rm "$file"
+	fi
+done
+
+if [[ ! -f ~/.zshenv ]]; then
+	cd ~/.zsh && ln .zshenv ../.zshenv
+fi
+
+# git configuration
+
+# check for global name config
+if [[ -z $(git config --global user.name) ]]; then
+	printf "No global name set. Enter full name: "
+	read -r githubusername
+	git config --global user.name "$githubusername"
+fi
+
+# check for global email config
+if [[ -z $(git config --global user.email) ]]; then
+	printf "No global email set. Enter email connected to your GitHub account: "
+	read -r githubemail
+	git config --global user.email "$githubemail"
+fi
+
+
+git config --global core.editor nano
+

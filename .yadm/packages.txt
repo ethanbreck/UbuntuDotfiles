@@ -1,0 +1,17 @@
+yadm
+geary
+google-drive-ocamlfuse
+firefox
+calibre
+libreoffice
+git
+emacs
+atom
+xclip
+caffeine
+torbrowser-launcher
+zsh
+powerline
+fonts-powerline
+curl
+zsh-antigen
